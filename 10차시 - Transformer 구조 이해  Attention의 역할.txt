@@ -1,0 +1,140 @@
+10차시 - Transformer 구조 이해: Attention의 역할
+
+
+
+1. 자연어 모델의 발전 과정
+
+
+
+RNN 
+초창기 자연어 모델로는 RNN(Recurrent Neural Network)을 사용함.
+-RNN은 문장을 한 단어씩 순서대로 처리하는 모델 구조를 가지며, 이전 단어의 정보를 다음 단어로 전달하면서 문장의 의미를 파악하는 방식임
+
+LSTM
+RNN이 길이가 긴 문장을 처리할 떄, 앞 단어의 내용에 대한 정보가 서서히 손실이 되어, 이를 계산하기 위해 LSTM이 사용됨.
+-LSTM은 RNN의 구조에서 중요한 정보를 오래 유지하기 위해 앞 단어의 기억을 유지하기 위한 메모리 정보를 다음 LSTM에 같이 전달함.
+
+RNN/LSTM의 한계 1
+RNN과 LSTM은 문장을 한 단어씩 순차적으로 처리하는데, 이전 단어의 정보를 다음 단계로 전달해나가면서 정보 손실이 발생함.
+
+RNN/LSTM의 한계 2
+RNN과 LSTM이 단어를 순차적으로 처리하면, 앞 단어의 계산이 끝나야 다음 단어를 처리할 수 있어 비효율이 발생함.
+
+기존 접근의 한계
+기존 RNN의 한계를 극복하기 위해 더 많은 정보를 기억하려는 시도가 이어짐.
+그러나, 이러한 접근은 순차 처리 구조 자체를 바꾸지 못했기 때문에 근본적인 해결책이 되지 못함
+
+Attention의 등장
+Attention은 문맥에 따라 집중할 단어를 결정하는 방식을 의미함.
+문맥에 따라 집중할 단어를 선택함.
+기존모델 : 얼마나 많은 정보를 기억할 수 있는가 에 초점
+Attention : 필요한 순간에 어떤 정보에 집중할 것인가
+
+
+
+2. Transformer 이해하기: Attention의 의미와 목적
+
+
+
+Transformer란
+기존 RNN의 순차 처리 한계를 극복하기 위해 제안한 모델 구조
+문장을 순서대로 읽지 않고 Attention을 통해 전체 문맥을 한 번에 해석
+
+Transformer의 구조
+Transformer 블록은 다음과 같은 주요 연산들로 구성됨.
+-Embedding: 단어를 의미 벡터로 변환
+-Attention : 단어 간 중요도와 관계 계산
+-Feed Forward Network(FFN) : 비선형성을 부여하고 특징을 추출. 2개의 Fully-Connected Linear Layer 연산
+
+Encoder vs Decoder
+Transformer는 문맥을 이해하는 인코더와 문장을 생성하는 디코더로 구성됨.
+인코더 : 입력 문장 정보 압축
+디코더 : 압축된 정보를 바탕으로 문장 생성
+
+병렬 처리
+Transformer는 모든 토큰을 병렬적으로 처리할 수 있어 학습과 추론이 훨씬 효율적이다.
+
+Attention이란
+Attention은 중요도를 계산하는 방식임. 모든 단어를 동일하게 다루지 않고 문맥에 따라 중요도를 다르게 반영함.
+Attention : 현재 단어를 이해할 때 다른 단어를 참고하는 정도를 가중치 형태로 계산하는 메커니즘
+
+Attention 원리
+현재 단어는 다른 단어를 얼마나 참고할까?
+현재 토큰과 다른 토큰과의 유사도를 측정하고 이를 점수화하여 가중치를 산출.
+
+기억 vs Attention
+Attention은 기억 구조가 아님. 기존의 RNN/LSTM은 앞에서 본 정보를 내부 상태에 저장하는 기억 기반 구조인 반면, Attention은 필요한 순간에 관련 있는 정보에 집중해서 참조하는 방법임.
+
+확률적 매커니즘
+Attention은 특정 단어 하나만 선택하지 않음.
+여러 단어를 참고하되, 각 단어를 서로 다른 비중으로 반영함
+
+Attention weight = 중요도
+각 단어가 문맥 이해에 기여하는 중요도를 의미함
+
+RNN vs Transformer
+두 모델의 가장 큰 차이는 문장을 처리하는 방식임
+RNN : 순서 중심
+Transformer : 관계와 중요도 중심
+
+
+ 
+3. 다양한 Attention 기법
+
+
+
+Self-Attention
+Self-Attention은 주어진 입력 텍스트 안에서 각 단어가 다른 단어와 얼마나 관련성이 있는지를 계산함.
+Self-Attention 계산을 위해 각 단어는 세 가지 벡터로 표현됨.
+Query, Key, Value 벡터로 만듬.
+
+Query : 현재 단어가 다른 단어들을 평가할 때 기준이 되는 벡터
+Key : Query와의 유사도를 계산하기 위한 벡터
+Value : 실제로 결합되어 새로운 표현을 만드는 벡터
+Query-Key 계산 결과가 Value의 반영 비율을 결정함.
+
+Self-Attention 계산 흐름
+1. Query와 Key의 내적으로 유사도 계산
+2. Softmax로 Attention weight 계산
+3. Attention weight로 Value 가중합 계산
+
+Multi-Head Attention 개념
+Multi-Head Attention은 Attention을 한번만 수행하지 않음.
+여러 개의 Attention Head를 활요하여 문장을 동시에 서로 다른 방식으로 바라봄.
+각 Head는 각각 서로 다른 관계에 집중하여 다양한 문맥을 반영할 수 있음
+
+Head 분리 이유
+하나의 Attention은 하나의 관계만 강조.
+여러 Head를 사용하면 중요한 관계를 놓치지 않고 다양한 패턴을 동시에 포착함. 
+Multi-Head는 정보를 나누는 것이 아니라 해석의 시야를 넓히는 구조.
+
+Multi-Head Attention의 핵심 효과
+각 Head는 다른 것에 집중할 수 있음.
+예를 들어, 서로 다른 Attention Head는 다음에 집중할 수 있음
+-문법적 관계				-더 풍부한 문맥 표현
+-의미적 유사성		-> 	-다양한 관계의 동시 반영
+-단어의 위치와 순서 		-복잡한 문장 구조 이해 가능
+Multi-Head Attention은 문장을 하나의 시선이 아니라 여러 시선의 조합으로 이해하게 만듦
+
+
+
+4. Encoder vs Decoder
+
+
+
+Encoder와 Decoder
+Encoder : 입력 문장의 모든 단어를 동시에 고려하여 각 단어의 문맥적 의미 표현을 생성
+Decoder : 이미 생성된 단어와 Encoder가 만든 문맥 정보를 참고해 다음 단어를 예측
+
+Encoder
+Encoder는 입력 문장의 모든 단어를 동시에 자유롭게 서로 참조하며 처리함.
+앞뒤 토큰 맥락을 함께 고려하여 임베딩해주는 역할
+
+Decoder
+Decoder는 문장을 생성하는 과정에서 현재 시점까지의 정보만 참고함.
+이미 생성된 단어와 Encoder가 만든 문맥 정보를 함께 사용해 다음 단어를 예측함.
+
+
+실습 - Gemini로 Self-Attention 계산하기
+Q,K,V가 연산되는 순서를 도식으로 표현해보기
+
